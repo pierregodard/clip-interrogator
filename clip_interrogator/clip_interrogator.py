@@ -128,6 +128,7 @@ class Interrogator():
         self._prepare_clip()
         self.artists = LabelTable(artists, "artists", self.clip_model, self.tokenize, config)
         self.flavors = LabelTable(_load_list(config.data_path, 'flavors.txt'), "flavors", self.clip_model, self.tokenize, config)
+        self.colors = LabelTable(_load_list(config.data_path, 'colors.txt'), "colors", self.clip_model, self.tokenize, config)
         self.mediums = LabelTable(_load_list(config.data_path, 'mediums.txt'), "mediums", self.clip_model, self.tokenize, config)
         self.movements = LabelTable(_load_list(config.data_path, 'movements.txt'), "movements", self.clip_model, self.tokenize, config)
         self.trendings = LabelTable(trending_list, "trendings", self.clip_model, self.tokenize, config)
@@ -213,20 +214,21 @@ class Interrogator():
 
     def interrogate_classic(self, image: Image, max_flavors: int=3, caption: Optional[str]=None) -> str:
         """Classic mode creates a prompt in a standard format first describing the image, 
-        then listing the artist, trending, movement, and flavor text modifiers."""
+        then listing the artist, color, trending, movement, and flavor text modifiers."""
         caption = caption or self.generate_caption(image)
         image_features = self.image_to_features(image)
 
         medium = self.mediums.rank(image_features, 1)[0]
         artist = self.artists.rank(image_features, 1)[0]
+        color = self.colors.rank(image_features, 1)[0]
         trending = self.trendings.rank(image_features, 1)[0]
         movement = self.movements.rank(image_features, 1)[0]
         flaves = ", ".join(self.flavors.rank(image_features, max_flavors))
 
         if caption.startswith(medium):
-            prompt = f"{caption} {artist}, {trending}, {movement}, {flaves}"
+            prompt = f"{caption} {artist}, {color}, {trending}, {movement}, {flaves}"
         else:
-            prompt = f"{caption}, {medium} {artist}, {trending}, {movement}, {flaves}"
+            prompt = f"{caption}, {medium} {artist}, {color}, {trending}, {movement}, {flaves}"
 
         return _truncate_to_fit(prompt, self.tokenize)
 
@@ -236,7 +238,7 @@ class Interrogator():
         are less readable."""
         caption = caption or self.generate_caption(image)
         image_features = self.image_to_features(image)
-        merged = _merge_tables([self.artists, self.flavors, self.mediums, self.movements, self.trendings], self.config)
+        merged = _merge_tables([self.artists, self.colors, self.flavors, self.mediums, self.movements, self.trendings], self.config)
         tops = merged.rank(image_features, max_flavors)
         return _truncate_to_fit(caption + ", " + ", ".join(tops), self.tokenize)
 
@@ -253,7 +255,7 @@ class Interrogator():
         caption = caption or self.generate_caption(image)
         image_features = self.image_to_features(image)
 
-        merged = _merge_tables([self.artists, self.flavors, self.mediums, self.movements, self.trendings], self.config)
+        merged = _merge_tables([self.artists, self.colors, self.flavors, self.mediums, self.movements, self.trendings], self.config)
         flaves = merged.rank(image_features, self.config.flavor_intermediate_count)
         best_prompt, best_sim = caption, self.similarity(image_features, caption)
         best_prompt = self.chain(image_features, flaves, best_prompt, best_sim, min_count=min_flavors, max_count=max_flavors, desc="Flavor chain")
