@@ -220,10 +220,11 @@ class Interrogator():
 
         medium = self.mediums.rank(image_features, 1)[0]
         artist = self.artists.rank(image_features, 1)[0]
-        color = self.colors.rank(image_features, 1)[0]
+        # color = self.colors.rank(image_features, 1)[0]
         trending = self.trendings.rank(image_features, 1)[0]
         movement = self.movements.rank(image_features, 1)[0]
         flaves = ", ".join(self.flavors.rank(image_features, max_flavors))
+        color = ", ".join(self.colors.rank(image_features, 10))
 
         if caption.startswith(medium):
             prompt = f"{caption} {artist}, {color}, {trending}, {movement}, {flaves}"
@@ -253,6 +254,7 @@ class Interrogator():
 
     def interrogate(self, image: Image, min_flavors: int=8, max_flavors: int=32, caption: Optional[str]=None) -> str:
         caption = caption or self.generate_caption(image)
+        print(f"BLIP caption: {caption}")
         image_features = self.image_to_features(image)
 
         merged = _merge_tables([self.artists, self.colors, self.flavors, self.mediums, self.movements, self.trendings], self.config)
