@@ -257,7 +257,8 @@ class Interrogator():
         print(f"BLIP caption: {caption}")
         image_features = self.image_to_features(image)
 
-        merged = _merge_tables([self.artists, self.colors, self.flavors, self.mediums, self.movements, self.trendings], self.config)
+        # merged = _merge_tables([self.artists, self.colors, self.flavors, self.mediums, self.movements, self.trendings], self.config)
+        merged = _merge_tables([self.artists, self.colors, self.movements], self.config)
         flaves = merged.rank(image_features, self.config.flavor_intermediate_count)
         best_prompt, best_sim = caption, self.similarity(image_features, caption)
         best_prompt = self.chain(image_features, flaves, best_prompt, best_sim, min_count=min_flavors, max_count=max_flavors, desc="Flavor chain")
