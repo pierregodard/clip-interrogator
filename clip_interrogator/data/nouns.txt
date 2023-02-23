@@ -864,7 +864,6 @@ canon
 canopy
 cantaloupe
 canteen
-canvas
 cap
 capability
 capacity
@@ -900,8 +899,6 @@ carol
 carotene
 carp
 carpenter
-carpet
-carpeting
 carport
 carriage
 carrier
@@ -1728,7 +1725,6 @@ destination
 destiny
 destroyer
 destruction
-detail
 detainee
 detainment
 detection
@@ -3300,7 +3296,6 @@ junket
 jury
 justice
 justification
-jute
 kale
 kamikaze
 kangaroo
@@ -4273,7 +4268,6 @@ pan
 pancake
 pancreas
 panda
-panel
 panic
 pannier
 panpipe
@@ -5171,7 +5165,6 @@ ruby
 ruckus
 rudiment
 ruffle
-rug
 rugby
 ruin
 rule
